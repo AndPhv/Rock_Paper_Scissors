@@ -15,6 +15,8 @@ import com.pengrad.telegrambot.request.SendMessage;
 public class Bot
 {
     private final TelegramBot bot = new TelegramBot(System.getenv("BOT_TOKEN"));
+    private final String PROCESSING_LABEL = "Processing...";
+
     public void serve() // получения списка обновлений от telegram API (обновления содержат в себе действия со стороны пользователя)
     {
         bot.setUpdatesListener(updates -> {
@@ -31,19 +33,39 @@ public class Bot
 
         BaseRequest request = null;
 
-        if (inlineQuery != null)
+        if (message != null && message.viaBot() != null && message.viaBot().username().equals("RPSnewgame_bot"))
         {
-            InlineQueryResultArticle rock = buildInlineButton("rock", "Rock", "0");
-            InlineQueryResultArticle paper = buildInlineButton("paper", "Paper", "1");
-            InlineQueryResultArticle scissors = buildInlineButton("scissors", "Scissors", "2");
+            InlineKeyboardMarkup replyMarkup = message.replyMarkup();
+            if (replyMarkup == null)
+            {
+                return;
+            }
+
+            InlineKeyboardButton[][] buttons = replyMarkup.inlineKeyboard();
+
+            if (buttons == null)
+            {
+                return;
+            }
+            String senderChose = buttons[0][0].text();
+
+            if (!senderChose.equals(PROCESSING_LABEL))
+            {
+                return;
+            }
+        } else if (inlineQuery != null)
+        {
+            InlineQueryResultArticle rock = buildInlineButton("rock", "\uD83D\uDC4A Rock", "0");
+            InlineQueryResultArticle paper = buildInlineButton("paper", "✋ Paper", "1");
+            InlineQueryResultArticle scissors = buildInlineButton("scissors", "✌ Scissors", "2");
 
             request = new AnswerInlineQuery(inlineQuery.id(), rock, paper, scissors);
 
-        } else if (message != null)
+        } /*else if (message != null)
         {
             long chatId = message.chat().id();
             request = new SendMessage(chatId, "Hello!");
-        }
+        }*/
 
         if (request != null)
         {
@@ -56,7 +78,7 @@ public class Bot
         return new InlineQueryResultArticle(id, title, "I'm ready to fight!")
                 .replyMarkup(
                         new InlineKeyboardMarkup(
-                                new InlineKeyboardButton("Processing...").callbackData(callbackData)
+                                new InlineKeyboardButton(PROCESSING_LABEL).callbackData(callbackData)
                         )
                 );
     }
