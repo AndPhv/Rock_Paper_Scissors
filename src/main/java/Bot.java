@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.InlineQueryResultArticle;
+import com.pengrad.telegrambot.request.AnswerInlineQuery;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 
@@ -32,9 +33,12 @@ public class Bot
 
         if (inlineQuery != null)
         {
-            InlineQueryResultArticle Rock = buildInlineButton("rock", "Rock", "0");
-            InlineQueryResultArticle Paper = buildInlineButton("paper", "Paper", "1");
-            InlineQueryResultArticle Scissors = buildInlineButton("scissors", "Scissors", "2");
+            InlineQueryResultArticle rock = buildInlineButton("rock", "Rock", "0");
+            InlineQueryResultArticle paper = buildInlineButton("paper", "Paper", "1");
+            InlineQueryResultArticle scissors = buildInlineButton("scissors", "Scissors", "2");
+
+            request = new AnswerInlineQuery(inlineQuery.id(), rock, paper, scissors);
+
         } else if (message != null)
         {
             long chatId = message.chat().id();
