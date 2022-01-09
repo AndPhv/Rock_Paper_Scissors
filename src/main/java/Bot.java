@@ -95,20 +95,20 @@ public class Bot
             String senderName = data[1];
             String senderChose = data[2];
             String opponentChose = data[3];
-            String opponentName = callbackQuery.from().firstName() + "!";
+            String opponentName = callbackQuery.from().firstName();
 
             if (senderChose.equals(opponentChose))
             {
-                request = new SendMessage(chatId, "Nobody wins");
+                request = new SendMessage(chatId, "Ничья");
             } else if (opponentWins.contains(senderChose + opponentChose))
             {
                 request = new SendMessage(
-                        chatId, String.format("%s (%s) was beaten %s (%s)", senderName, senderChose, opponentName, opponentChose)
+                        chatId, String.format("%s (%s) был побит %s (%s)", senderName, senderChose, opponentName, opponentChose)
                 );
             } else
             {
                 request = new SendMessage(
-                        chatId, String.format("%s (%s) was beaten %s (%s)", opponentName, opponentChose, senderName, senderChose)
+                        chatId, String.format("%s (%s) был побит %s (%s)", opponentName, opponentChose, senderName, senderChose)
                 );
             }
 
@@ -128,7 +128,7 @@ public class Bot
     }
 
     private InlineQueryResultArticle buildInlineButton(String id, String title, String callbackData) {
-        return new InlineQueryResultArticle(id, title, "I'm ready to fight!")
+        return new InlineQueryResultArticle(id, title, "Я готов сражаться!")
                 .replyMarkup(
                         new InlineKeyboardMarkup(
                                 new InlineKeyboardButton(PROCESSING_LABEL).callbackData(callbackData)
