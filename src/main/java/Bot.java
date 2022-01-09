@@ -10,6 +10,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.InlineQueryResultArticle;
 import com.pengrad.telegrambot.request.AnswerInlineQuery;
 import com.pengrad.telegrambot.request.BaseRequest;
+import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 
 public class Bot
@@ -53,6 +54,21 @@ public class Bot
             {
                 return;
             }
+            Long chatId = message.chat().id();
+            String senderName = message.from().firstName();
+            Integer messageId = message.messageId();
+
+            new EditMessageText(chatId, messageId, message.text())
+                    .replyMarkup(
+                            new InlineKeyboardMarkup(
+                                    new InlineKeyboardButton("\uD83D\uDC4A")
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "0")),
+                                    new InlineKeyboardButton("✋")
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "1")),
+                                    new InlineKeyboardButton("✌")
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "2"))
+                            )
+                    );
         } else if (inlineQuery != null)
         {
             InlineQueryResultArticle rock = buildInlineButton("rock", "\uD83D\uDC4A Rock", "0");
