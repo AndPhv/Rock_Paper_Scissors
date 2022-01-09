@@ -48,9 +48,9 @@ public class Bot
             {
                 return;
             }
-            String senderChose = buttons[0][0].text();
+            String buttonLabel  = buttons[0][0].text();
 
-            if (!senderChose.equals(PROCESSING_LABEL))
+            if (!buttonLabel.equals(PROCESSING_LABEL))
             {
                 return;
             }
@@ -58,15 +58,15 @@ public class Bot
             String senderName = message.from().firstName();
             Integer messageId = message.messageId();
 
-            new EditMessageText(chatId, messageId, message.text())
+            request = new EditMessageText(chatId, messageId, message.text())
                     .replyMarkup(
                             new InlineKeyboardMarkup(
                                     new InlineKeyboardButton("\uD83D\uDC4A")
-                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "0")),
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, buttonLabel, "0")),
                                     new InlineKeyboardButton("✋")
-                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "1")),
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, buttonLabel, "1")),
                                     new InlineKeyboardButton("✌")
-                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "2"))
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, buttonLabel, "2"))
                             )
                     );
         } else if (inlineQuery != null)
@@ -75,9 +75,13 @@ public class Bot
             InlineQueryResultArticle paper = buildInlineButton("paper", "✋ Paper", "1");
             InlineQueryResultArticle scissors = buildInlineButton("scissors", "✌ Scissors", "2");
 
-            request = new AnswerInlineQuery(inlineQuery.id(), rock, paper, scissors);
+            request = new AnswerInlineQuery(inlineQuery.id(), rock, paper, scissors).cacheTime(1);
 
-        } /*else if (message != null)
+        } else if (callbackQuery != null)
+        {
+            System.out.println("");
+        }
+        /*else if (message != null)
         {
             long chatId = message.chat().id();
             request = new SendMessage(chatId, "Hello!");
