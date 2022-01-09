@@ -48,7 +48,8 @@ public class Bot
             {
                 return;
             }
-            String buttonLabel  = buttons[0][0].text();
+            InlineKeyboardButton button = buttons[0][0];
+            String buttonLabel  = button.text();
 
             if (!buttonLabel.equals(PROCESSING_LABEL))
             {
@@ -56,17 +57,18 @@ public class Bot
             }
             Long chatId = message.chat().id();
             String senderName = message.from().firstName();
+            String senderChose = button.callbackData();
             Integer messageId = message.messageId();
 
             request = new EditMessageText(chatId, messageId, message.text())
                     .replyMarkup(
                             new InlineKeyboardMarkup(
                                     new InlineKeyboardButton("\uD83D\uDC4A")
-                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, buttonLabel, "0")),
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "0")),
                                     new InlineKeyboardButton("✋")
-                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, buttonLabel, "1")),
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "1")),
                                     new InlineKeyboardButton("✌")
-                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, buttonLabel, "2"))
+                                            .callbackData(String.format("%d %s %s %s", chatId, senderName, senderChose, "2"))
                             )
                     );
         } else if (inlineQuery != null)
@@ -79,6 +81,12 @@ public class Bot
 
         } else if (callbackQuery != null)
         {
+            String[] data = callbackQuery.data().split(" ");
+            String chatId = data[0];
+            String senderName = data[1];
+            String senderChose = data[2];
+            String opponentChose = data[3];
+            String opponentName = callbackQuery.from().firstName();
             System.out.println("");
         }
         /*else if (message != null)
