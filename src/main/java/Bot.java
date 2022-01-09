@@ -13,10 +13,19 @@ import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Bot
 {
     private final TelegramBot bot = new TelegramBot(System.getenv("BOT_TOKEN"));
     private final String PROCESSING_LABEL = "Processing...";
+    private final static List<String> opponentWins = new ArrayList<String>()
+    {{
+        add("01");
+        add("12");
+        add("20");
+    }};
 
     public void serve() // получения списка обновлений от telegram API (обновления содержат в себе действия со стороны пользователя)
     {
@@ -82,11 +91,27 @@ public class Bot
         } else if (callbackQuery != null)
         {
             String[] data = callbackQuery.data().split(" ");
-            String chatId = data[0];
+            Long chatId = Long.parseLong(data[0]);
             String senderName = data[1];
             String senderChose = data[2];
             String opponentChose = data[3];
-            String opponentName = callbackQuery.from().firstName();
+            String opponentName = callbackQuery.from().firstName() + "!";
+
+            if (senderChose.equals(opponentChose))
+            {
+                request = new SendMessage(chatId, "Nobody wins");
+            } else if (opponentWins.contains(senderChose + opponentChose))
+            {
+                request = new SendMessage(
+                        chatId, String.format("%s (%s) was beaten %s (%s)", senderName, senderChose, opponentName, opponentChose)
+                );
+            } else
+            {
+                request = new SendMessage(
+                        chatId, String.format("%s (%s) was beaten %s (%s)", opponentName, opponentChose, senderName, senderChose)
+                );
+            }
+
             System.out.println("");
         }
         /*else if (message != null)
